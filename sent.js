@@ -1,4 +1,4 @@
-import { close_api, delay, send, startService } from "./utils/utils.js";
+import { close_api, delay, send, startService, waitForApi } from "./utils/utils.js";
 import { summarizeResponse } from "./utils/safeLog.js";
 
 async function login() {
@@ -8,9 +8,14 @@ async function login() {
   if (!phone) {
     throw new Error("参数错误！请检查")
   }
-  // 启动服务
+  // 启动服务并等待就绪（避免冷启动竞态）
   const api = startService()
-  await delay(2000)
+  try {
+    await waitForApi()
+  } catch (e) {
+    close_api(api)
+    throw e
+  }
 
   console.log("开始发送验证码")
   try {
@@ -26,10 +31,6 @@ async function login() {
   } finally {
     close_api(api)
   }
-
-  if (api.killed) {
-    process.exit(0)
-  }
 }
 
-login()
+login().then(() => process.exit(0)).catch(e => { console.error(e); process.exit(1) })

@@ -137,7 +137,7 @@ const createRequest = (options) => {
         answer.body = body;
       }
 
-      if (response.data.status === 0 || (response.data?.error_code && response.data.error_code !== 0)) {
+      if (response.data?.status === 0 || (response.data?.error_code && response.data.error_code !== 0)) {
         answer.status = 502;
         reject(answer);
       } else {

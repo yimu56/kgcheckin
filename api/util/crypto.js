@@ -50,7 +50,7 @@ function cryptoAesEncrypt(data, opt) {
 
   const cipher = crypto.createCipheriv('aes-256-cbc', key, iv);
   const dest = Buffer.concat([cipher.update(buffer), cipher.final()]);
-  if (opt?.key && opt?.key) return dest.toString('hex');
+  if (opt?.key && opt?.iv) return dest.toString('hex');
   return { str: dest.toString('hex'), key: tempKey };
 }
 
